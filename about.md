@@ -3,28 +3,28 @@ layout: page
 title: About
 ---
 
-<p class="message">
-  Hey there! This page is included as an example. Feel free to customize it for your own use upon downloading. Carry on!
-</p>
+I am Matt Eding and love exploring and pushing the limits of the Python
+language. Additionally I have familiarity in Haskell (go itertools!), C++, and
+JavaScript to gain insights into other language idioms and paradigms. As a
+graduate in Mathematics from UC Santa Cruz I, love looking for interesting problems
+to solve in creative ways.
 
-In the novel, *The Strange Case of Dr. Jekyll and Mr. Hyde*, Mr. Poole is Dr. Jekyll's virtuous and loyal butler. Similarly, Poole is an upstanding and effective butler that helps you build Jekyll themes. It's made by [@mdo](https://twitter.com/mdo).
+I have studied a wide "array" (love puns too) of data science fields including
+regression, classification, natural language processing, and evolutionary
+algorithms. Feel free to check out projects I have done on [my GitHub](https://github.com/MattEding).
 
-There are currently two themes built on Poole:
+I am always looking to learn new topics and when I find something I am unfamiliar
+with, I seek to read up on literature to become proficient at it. Computer science
+books I have read include the following in no particular order:
 
-* [Hyde](http://hyde.getpoole.com)
-* [Lanyon](http://lanyon.getpoole.com)
-
-Learn more and contribute on [GitHub](https://github.com/poole).
-
-## Setup
-
-Some fun facts about the setup of this project include:
-
-* Built for [Jekyll](http://jekyllrb.com)
-* Developed on GitHub and hosted for free on [GitHub Pages](https://pages.github.com)
-* Coded with [Sublime Text 2](http://sublimetext.com), an amazing code editor
-* Designed and developed while listening to music like [Blood Bros Trilogy](https://soundcloud.com/maddecent/sets/blood-bros-series)
-
-Have questions or suggestions? Feel free to [open an issue on GitHub](https://github.com/poole/poole/issues/new) or [ask me on Twitter](https://twitter.com/mdo).
-
-Thanks for reading!
+- Fluent Python
+- Python Cookbook
+- Algorithms in a Nutshell
+- Python for Data Analysis
+- Hands on Machine Learning with Scikit-Learn and Tensor Flow
+- Elegant Python
+- Learn You a Haskell for Greater Good
+- Elegant JavaScript
+- High Performance Python: Practical Performant Programming for Humans
+- Scipy and NumPy
+- Effective Computation in Physics
