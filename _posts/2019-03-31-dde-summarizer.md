@@ -42,6 +42,13 @@ def jaccard_similarity(a, b):
   union = np.sum(a | b)
   return intersection / union
 ```
+As an example to illustrate its use with unique words from sentences:  
+__Sentence A:__ Python is a dynamic language.  
+__Sentence B:__ C++ is a compiled language.  
+__Intersection:__ {is, a, language}  
+__Union:__ {python, is, a, dynamic, language, c++, compiled}  
+__Jaccard:__ 3 / 7 = 0.486  
+
 Our goal is to partition the sentences in the document into clusters, from which
 we will pick representative sentences from each to use in the summary. To achive
 this, we will introduce cohesion (closeness within a cluster) and separation (how

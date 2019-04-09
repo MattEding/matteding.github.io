@@ -28,3 +28,5 @@ books I have read include the following in no particular order:
 - High Performance Python: Practical Performant Programming for Humans
 - Scipy and NumPy
 - Effective Computation in Physics
+- Automate the Boring Stuff with Python
+- Learning SQL
