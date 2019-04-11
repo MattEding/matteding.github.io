@@ -120,8 +120,10 @@ array([[0, 0, 0, 0],
 ![Broadcasting-Column-Row](/images/broadcasting-col-row.gif)
 
 Hopefully this will help you embrace using the awesome power of broadcasting in your future work.
-It allows you to concisely write code *(i.e. less error prone)* while making your program more performant at the same time. 
+It allows you to concisely write code *(i.e. less error prone)* while making your program more performant at the same time.
 
 ```python
 In [27]: exit()  # the end :D
 ```
+
+*Code used to create the above animations are located at [my GitHub](https://github.com/MattEding/NumPy-Articles/tree/master/broadcasting).*
