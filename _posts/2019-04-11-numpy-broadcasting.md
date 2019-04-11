@@ -33,7 +33,7 @@ Here is an example that fails to broadcast:
 ```python
 In [7]: arr_3 = np.array([[[4, 2, 1]]])
 
-In [4]: arr_4 = (np.linspace(0, 100, 12)  # 12 equally spaced numbers from 0-100
+In [4]: arr_4 = (np.linspace(0, 100, 12)  # 12 equally spaced numbers from 0 to 100
    ...:            .reshape(-1, 6)  # -1 has numpy calculate first axis dimension
    ...:            .astype(int))
 
@@ -119,11 +119,31 @@ array([[0, 0, 0, 0],
 
 ![Broadcasting-Column-Row](/images/broadcasting-col-row.gif)
 
+An application in data science using broadcasting is the ability to normalize data to range from 0 to 1.
+
+```python
+In [27]: data = np.array([[ 4.4,  2.1, -9.0],
+    ...:                  [ 0.4, -3.2,  3.9],
+    ...:                  [-6.7, -5.0,  7.4]])
+
+In [28]: data -= data.min()  # make min value 0
+
+In [29]: data /= data.max()  # make max value 1
+
+In [30]: assert (data.min() == 0) and (data.max() == 1)
+
+In [31]: data
+Out[31]:
+array([[0.81707317, 0.67682927, 0.        ],
+       [0.57317073, 0.35365854, 0.78658537],
+       [0.1402439 , 0.24390244, 1.        ]])
+```
+
 Hopefully this will help you embrace using the awesome power of broadcasting in your future work.
 It allows you to concisely write code *(i.e. less error prone)* while making your program more performant at the same time.
 
 ```python
-In [27]: exit()  # the end :D
+In [32]: exit()  # the end :D
 ```
 
 *Code used to create the above animations are located at [my GitHub](https://github.com/MattEding/NumPy-Articles/tree/master/broadcasting).*
