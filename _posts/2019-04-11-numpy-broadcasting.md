@@ -139,7 +139,7 @@ array([[0.81707317, 0.67682927, 0.        ],
        [0.1402439 , 0.24390244, 1.        ]])
 ```
 
-Hopefully this will help you embrace using the awesome power of broadcasting in your future work.
+Hopefully this will help you embrace using the] power of broadcasting in your future work.
 It allows you to concisely write code *(i.e. less error prone)* while making your program more performant at the same time.
 
 ```python
