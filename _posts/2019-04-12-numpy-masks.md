@@ -61,27 +61,27 @@ Moreover masks can be used to search data structures for information you need at
 Since Pandas is build upon NumPy, we can use masking to make queries on strings easily.
 
 ```python
-In [9]: import pandas as pd
+In [14]: import pandas as pd
 
-In [10]: string = ('NumPy is the building block of the Pandas library. '
+In [15]: string = ('NumPy is the building block of the Pandas library. '
                   'Masking works on Series, DataFrames, and N-dimensional Arrays.')
 
-In [11]: words = pd.Series(string.split())
+In [16]: words = pd.Series(string.split())
 
-In [12]: lengthy = (words.str.len() >= 8)
+In [17]: lengthy = (words.str.len() >= 8)
 
-In [12]: capitalized = words.str.istitle()
+In [18]: capitalized = words.str.istitle()
 
-In [14]: words[lengthy]  # select long strings
-Out[14]:
+In [19]: words[lengthy]  # select long strings
+Out[19]:
 3          building
 8          library.
 13      DataFrames,
 15    N-dimensional
 dtype: object
 
-In [15]: words[~lengthy & capitalized]  # select short, capitalized strings
-Out[15]:
+In [20]: words[~lengthy & capitalized]  # select short, capitalized strings
+Out[20]:
 7      Pandas
 9     Masking
 12    Series,
@@ -89,11 +89,11 @@ Out[15]:
 dtype: object
 ```
 
-While masks won't necessarily make you a crime-fighting vigilante, it will make you a superhero programmer. 
+While masks won't necessarily make you a crime-fighting vigilante, it will make you a superhero programmer.
 So go out there and combat for better code!
 
 ```python
-In [16]: exit()  # the end :D
+In [21]: exit()  # the end :D
 ```
 
-*Code used to create the above animations are located at [my GitHub](https://github.com/MattEding/NumPy-Articles/tree/master/masks).*
+*Code used to create the above animation is located at [my GitHub](https://github.com/MattEding/NumPy-Articles/tree/master/masks).*
