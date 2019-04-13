@@ -17,7 +17,7 @@ In [3]: arr_2 = np.full(shape=(3, 1, 10), fill_value=np.nan)
 
 In [4]: shapes = [str(a.shape) for a in (arr_1, arr_2)]
 
-In [5]: rjusts = [s.rjust(len(max(shapes))) for s in shapes]
+In [5]: rjusts = [s.rjust(len(max(shapes, key=len))) for s in shapes]
 
 In [6]: print(*rjusts, sep='\n')
 # (2, 5, 3, 7, 10)
