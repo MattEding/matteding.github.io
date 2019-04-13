@@ -64,7 +64,7 @@ Since Pandas is build upon NumPy, we can use masking to make queries on strings 
 In [14]: import pandas as pd
 
 In [15]: string = ('NumPy is the building block of the Pandas library. '
-                  'Masking works on Series, DataFrames, and N-dimensional Arrays.')
+                   'Masking works on Series, DataFrames, and N-dimensional Arrays.')
 
 In [16]: words = pd.Series(string.split())
 

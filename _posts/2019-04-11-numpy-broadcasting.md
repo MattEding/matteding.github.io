@@ -59,9 +59,9 @@ Out[12]: (1, 2, 6)
 While the notion of expansion is helpful to understand broadcasting, NumPy does not actually create new, bigger arrays.
 This allows NumPy to be more efficient in both speed...
 ```python
-In [13]: nums = np.arange(1e6).reshape(10, 10, -1) # -1 has numpy calculate third axis dimension
+In [13]: nums = np.arange(1e6).reshape(10, 10, -1)  # -1 has numpy calculate third axis dimension
 
-In [14]: ones = np.ones_like(nums) # same shape with np.*_like functions
+In [14]: ones = np.ones_like(nums)  # same shape with np.*_like functions
 
 In [15]: %timeit nums + 1
 # 1.01 ms ± 5.15 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
@@ -141,7 +141,7 @@ array([[0.81707317, 0.67682927, 0.        ],
        [0.1402439 , 0.24390244, 1.        ]])
 ```
 
-Hopefully this will help you embrace using the] power of broadcasting in your future work.
+Hopefully this will help you embrace using the power of broadcasting in your future work.
 It allows you to concisely write code *(i.e. less error prone)* while making your program more performant at the same time.
 
 ```python
