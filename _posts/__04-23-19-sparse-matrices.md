@@ -8,7 +8,7 @@
   2. [Linked List Matrix](#linked-list-matrix)
   3. [Dictionary of Keys Matrix](#dictionary-of-keys-matrix)
 3. [Compressed Sparse Matrices](#compressed-sparse-matrices)
-    1. [Compressed Sparse Row/Column](#compressed-sparse-row/column)
+    1. [Compressed Sparse Row/Column](#compressed-sparse-rowcolumn)
     2. [Block Sparse Row](#block-sparse-row)
 4. [Diagonal Matrix](#diagonal-matrix)
 5. [Specialized Functions](#specialized-functions)
@@ -37,15 +37,15 @@ In [0]: from scipy import sparse
 
 In [1]: import numpy as np
 
-In []: spmatrix = sparse.random(10, 10)
+In [2]: spmatrix = sparse.random(10, 10)
 
-In [161]: spmatrix
-Out[161]:
+In [3]: spmatrix
+Out[3]:
 <10x10 sparse matrix of type '<class 'numpy.float64'>'
         with 1 stored elements in COOrdinate format>
 
-In []: spmatrix.nnz / np.product(spmatrix.shape)  # sparsity
-Out[]: 0.01
+In [4]: spmatrix.nnz / np.product(spmatrix.shape)  # sparsity
+Out[4]: 0.01
 ```
 
 
@@ -62,23 +62,23 @@ This variant uses three subarrays to store the element values and their coordina
 ![COO Matrix](/images/coo.gif)
 
 ```python
-In [2]: row = [1, 3, 0, 2, 4]
+In [5]: row = [1, 3, 0, 2, 4]
 
-In [3]: col = [1, 4, 2, 3, 3]
+In [6]: col = [1, 4, 2, 3, 3]
 
-In [4]: data = [2, 5, 9, 1, 6]
+In [7]: data = [2, 5, 9, 1, 6]
 
-In [5]: coo = sparse.coo_matrix((data, (row, col)), shape=(6, 7))
+In [8]: coo = sparse.coo_matrix((data, (row, col)), shape=(6, 7))
 
-In [6]: print(coo)  # coordinate-value format
+In [9]: print(coo)  # coordinate-value format
 # (1, 1)        2
 # (3, 4)        5
 # (0, 2)        9
 # (2, 3)        1
 # (4, 3)        6
 
-In [7]: coo.todense()  # coo.toarray() for ndarray instead
-Out[7]:
+In [10]: coo.todense()  # coo.toarray() for ndarray instead
+Out[10]:
 matrix([[0, 0, 9, 0, 0, 0, 0],
         [0, 2, 0, 0, 0, 0, 0],
         [0, 0, 0, 1, 0, 0, 0],
@@ -92,22 +92,22 @@ The overhead incurred from needing to manage the subarrays is a fixed cost for s
 A word of caution: only use sparse arrays if they are sufficiently sparse enough; it would be counterproductive storing a mostly nonzero array using several subarrays to keep track of position and data.
 
 ```python
-In [8]: def memory_usage(coo):
-   ...:    # data memory and overhead memory
-   ...:    coo_mem = (sum(obj.nbytes for obj in [coo.data, coo.row, coo.col])
-   ...:               + sum(obj.__sizeof__() for obj in [coo, coo.data, coo.row, coo.col]))
-   ...:    print(f'Sparse: {coo_mem}')
-   ...:    mtrx = coo.todense()
-   ...:    mtrx_mem = mtx.nbytes + mtrx.__sizeof__()
-   ...:    print(f'Dense: {mtrx_mem}')
+In [11]: def memory_usage(coo):
+    ...:    # data memory and overhead memory
+    ...:    coo_mem = (sum(obj.nbytes for obj in [coo.data, coo.row, coo.col])
+    ...:               + sum(obj.__sizeof__() for obj in [coo, coo.data, coo.row, coo.col]))
+    ...:    print(f'Sparse: {coo_mem}')
+    ...:    mtrx = coo.todense()
+    ...:    mtrx_mem = mtx.nbytes + mtrx.__sizeof__()
+    ...:    print(f'Dense: {mtrx_mem}')
 
-In [9]: memory_usage(coo)
+In [12]: memory_usage(coo)
 # Sparse: 480
 # Dense: 448
 
-In [10]: coo.resize(100, 100)
+In [13]: coo.resize(100, 100)
 
-In [11]: memory_usage(coo)
+In [14]: memory_usage(coo)
 # Sparse: 480
 # Dense: 80112
 ```
@@ -121,36 +121,36 @@ Since it uses a [hash table](https://en.wikipedia.org/wiki/Hash_table) as storag
 Use this format if you need the functionality that come with builtin dictionaries, but be mindful that hash tables hog much more memory than arrays.
 
 ```python
-In [35]: dok = sparse.dok_matrix((10, 10))
+In [15]: dok = sparse.dok_matrix((10, 10))
 
-In [36]: dok[(3, 7)] = 42  # store value 42 at coordinate (3, 7)
+In [16]: dok[(3, 7)] = 42  # store value 42 at coordinate (3, 7)
 
-In []: dok[(9, 5)]  # zero elements are accessible
-Out[]: 0.0
+In [17]: dok[(9, 5)]  # zero elements are accessible
+Out[17]: 0.0
 
-In [151]: dok.keys() | dok.transpose().keys()  # union of key views
-Out[151]: {(3, 7), (7, 3)}
+In [18]: dok.keys() | dok.transpose().keys()  # union of key views
+Out[18]: {(3, 7), (7, 3)}
 
-In [37]: isinstance(dok, dict)
-Out[37]: True
+In [19]: isinstance(dok, dict)
+Out[19]: True
 ```
 
 Note: Be careful of potential problems using the methods inherited from `dict`; they don't always behave.
 
 ```python
-In []: out_of_bounds = (999, 999)
+In [20]: out_of_bounds = (999, 999)
 
-In []: dok[out_of_bounds] = 1  # works as expected
+In [21]: dok[out_of_bounds] = 1  # works as expected
 IndexError: Index out of bounds.
 
-In []: dok.setdefault(out_of_bounds)  # silently ignored...
+In [22]: dok.setdefault(out_of_bounds)  # silently ignored...
 
-In []: dok.toarray()  # ...until now
+In [23]: dok.toarray()  # ...until now
 ValueError: row index exceeds matrix dimensions
 
-In []: dok.pop(out_of_bounds)  # fix issue by removing bad point
+In [24]: dok.pop(out_of_bounds)  # fix issue by removing bad point
 
-In []: sparse.dok_matrix.fromkeys([..., ..., ...])  # don't get me started
+In [25]: sparse.dok_matrix.fromkeys([..., ..., ...])  # don't get me started
 TypeError: __init__() missing 1 required positional argument: 'arg1'
 ```
 
@@ -169,18 +169,18 @@ But unlike other sparse formats, these subarrays *cannot* be explicitly passed t
 Below is an illustration of various techniques used to build up a LIL matrix.
 
 ```python
-In []: lil = sparse.lil_matrix((6, 5), dtype=int)
+In [26]: lil = sparse.lil_matrix((6, 5), dtype=int)
 
-In []: lil[(0, -1)] = -1  # set individual point
+In [27]: lil[(0, -1)] = -1  # set individual point
 
-In []: lil[3, (0, 4)] = [-2] * 2  # set two points
+In [28]: lil[3, (0, 4)] = [-2] * 2  # set two points
 
-In []: lil.setdiag(8, k=0)  # set main diagonal
+In [29]: lil.setdiag(8, k=0)  # set main diagonal
 
-In []: lil[:, 2] = np.arange(lil.shape[0]).reshape(-1, 1) + 1  # set entire column
+In [30]: lil[:, 2] = np.arange(lil.shape[0]).reshape(-1, 1) + 1  # set entire column
 
-In []: lil.toarray()
-Out[]:
+In [31]: lil.toarray()
+Out[31]:
 array([[ 8,  0,  1,  0, -1],
        [ 0,  8,  2,  0,  0],
        [ 0,  0,  3,  0,  0],
@@ -194,13 +194,13 @@ This costs a lot more memory than a rectangular array, so if the data is big eno
 In short, LIL is mostly offered as a convenience, albeit an awesome one at that.
 
 ```python
-In [189]: lil.rows
-Out[189]:
+In [32]: lil.rows
+Out[32]:
 array([list([0, 2, 4]), list([1, 2]), list([2]), list([0, 2, 3, 4]),
        list([2, 4]), list([2])], dtype=object)
 
-In []: lil.data[:, np.newaxis]  # expose jagged structure
-Out[]:
+In [33]: lil.data[:, np.newaxis]  # expose jagged structure
+Out[33]:
 array([[list([8, 1, -1])],
        [list([8, 2])],
        [list([3])],
@@ -214,8 +214,8 @@ LIL actually uses Python's `list` which is actually a [dynamic array](https://en
 (A missed opportunity to christen it as LOL... :disappointed:)
 
 ```python
-In [301]: sparse.lil.__doc__  # module docstring
-Out[301]: 'LInked List sparse matrix class\n'
+In [34]: sparse.lil.__doc__  # module docstring
+Out[34]: 'LInked List sparse matrix class\n'
 ```
 
 
@@ -232,16 +232,16 @@ The <b>C</b>ompressed <b>S</b>parse <b>R</b>ow/<b>C</b>olumn ([CSR](https://docs
 ![CSR Matrix](/images/csr.gif)
 
 ```python
-In [12]: indptr = np.array([0, 2, 3, 3, 3, 6, 6, 7])
+In [35]: indptr = np.array([0, 2, 3, 3, 3, 6, 6, 7])
 
-In [13]: indices = np.array([0, 2, 2, 2, 3, 4, 3])
+In [36]: indices = np.array([0, 2, 2, 2, 3, 4, 3])
 
-In [14]: data = np.array([8, 2, 5, 7, 1, 2, 9])
+In [37]: data = np.array([8, 2, 5, 7, 1, 2, 9])
 
-In [15]: csr = sparse.csr_matrix((data, indices, indptr))
+In [38]: csr = sparse.csr_matrix((data, indices, indptr))
 
-In [16]: csr.todense()
-Out[16]:
+In [39]: csr.todense()
+Out[39]:
 matrix([[8, 0, 2, 0, 0],
         [0, 0, 5, 0, 0],
         [0, 0, 0, 0, 0],
@@ -265,19 +265,19 @@ As promised, the compressed formats are indeed faster than their COO counterpart
 For a modest-sized matrix, we see a 2x speed gain vs COO and 60x speedup vs dense!
 
 ```python
-In [17]: csr.resize(1000, 1000)
+In [40]: csr.resize(1000, 1000)
 
-In [18]: %timeit csr @ csr
+In [41]: %timeit csr @ csr
 # 111 µs ± 3.66 µs per loop (mean ± std. dev. of 7 runs, 10000 loops each)
 
-In [19]: coo = csr.tocoo()
+In [42]: coo = csr.tocoo()
 
-In [20]: %timeit coo @ coo
+In [43]: %timeit coo @ coo
 # 251 µs ± 8.06 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
 
-In [21]: arr = csr.toarray()
+In [44]: arr = csr.toarray()
 
-In [22]: %timeit arr @ arr  # order of magnitude slower!
+In [45]: %timeit arr @ arr  # order of magnitude slower!
 # 632 ms ± 2.02 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 ```
 
@@ -286,18 +286,18 @@ In [22]: %timeit arr @ arr  # order of magnitude slower!
 <b>B</b>lock <b>S</b>parse <b>R</b>ow ([BSR](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.bsr_matrix.html)) is like CSR but stores sub-matrices rather than scalar values at locations.
 
 ```python
-In [38]: ones = np.ones((2, 3), dtype=int)
+In [46]: ones = np.ones((2, 3), dtype=int)
 
-In [39]: data = np.array([ones + i for i in range(4)])
+In [47]: data = np.array([ones + i for i in range(4)])
 
-In [40]: indices = [1, 2, 2, 0]
+In [48]: indices = [1, 2, 2, 0]
 
-In [41]: indptr = [0, 2, 3, 4]
+In [49]: indptr = [0, 2, 3, 4]
 
-In [42]: bsr = sparse.bsr_matrix((data, indices, indptr))
+In [50]: bsr = sparse.bsr_matrix((data, indices, indptr))
 
-In [43]: bsr.todense()
-Out[43]:
+In [51]: bsr.todense()
+Out[51]:
 matrix([[0, 0, 0, 1, 1, 1, 2, 2, 2],
         [0, 0, 0, 1, 1, 1, 2, 2, 2],
         [0, 0, 0, 0, 0, 0, 3, 3, 3],
@@ -310,25 +310,25 @@ This implementation requires all the sub-matrices to have the same shape, but th
 These matrices do not have their unique data structure in SciPy, but can be indirectly made via the `sparse.bmat` constructor function.
 
 ```python
-A = np.arange(8).reshape(2, 4)  # can use dense arrays
+In [52]: A = np.arange(8).reshape(2, 4)  # can use dense arrays
 
-T = np.tri(5, 4)
+In [53]: T = np.tri(5, 4)
 
-L = [[8] * 4] * 2  # can use lists
+In [54]: L = [[8] * 4] * 2  # can use lists
 
-I = sparse.identity(4)  # can use sparse arrays
+In [55]: I = sparse.identity(4)  # can use sparse arrays
 
-Z = sparse.coo_matrix((2, 3))  # zeros to create column gap
+In [56]: Z = sparse.coo_matrix((2, 3))  # zeros to create column gap
 
-In [267]: sp.bmat([[   A,    Z,    L],
+In [57]: sp.bmat([[   A,    Z,    L],
      ...:          [None, None,    I],
      ...:          [   T, None, None]], dtype=int)
-Out[267]:
+Out[57]:
 <11x11 sparse matrix of type '<class 'numpy.int64'>'
         with 33 stored elements in COOrdinate format>
 
-In [268]: _.toarray()
-Out[268]:
+In [58]: _.toarray()
+Out[58]:
 array([[0, 1, 2, 3, 0, 0, 0, 8, 8, 8, 8],
        [4, 5, 6, 7, 0, 0, 0, 8, 8, 8, 8],
        [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
@@ -350,14 +350,14 @@ It is best suited for data that appears along the diagonals of a matrix.
 ![DIA matrix](/images/dia.gif)
 
 ```python
-In [25]: data = np.arange(15).reshape(3, -1) + 1
+In [59]: data = np.arange(15).reshape(3, -1) + 1
 
-In [26]: offsets = np.array([0, -3, 2])
+In [60]: offsets = np.array([0, -3, 2])
 
-In [27]: dia = sparse.dia_matrix((data, offsets), shape=(7, 5))
+In [61]: dia = sparse.dia_matrix((data, offsets), shape=(7, 5))
 
-In [28]: dia.toarray()
-Out[28]:
+In [62]: dia.toarray()
+Out[62]:
 array([[ 1,  0, 13,  0,  0],
        [ 0,  2,  0, 14,  0],
        [ 0,  0,  3,  0, 15],
@@ -371,16 +371,16 @@ The data is stored in an array of shape (offsets) x  (width) where the offsets d
 Offsets are below or above the main diagonal when negative or positive respectively. Note that if a row in the data matrix is cutoff, the excess elements can take any value (but they must have placeholders).
 
 ```python
-In [29]: dia.data.ravel()[9:12] = 0  # replace cutoff data
+In [63]: dia.data.ravel()[9:12] = 0  # replace cutoff data
 
-In [30]: dia.data
-Out[30]:
+In [64]: dia.data
+Out[64]:
 array([[ 1,  2,  3,  4,  5],
        [ 6,  7,  8,  9,  0],
        [ 0,  0, 13, 14, 15]])
 
-In [31]: dia.toarray()  # same array repr as earlier
-Out[31]:
+In [65]: dia.toarray()  # same array repr as earlier
+Out[65]:
 array([[ 1,  0, 13,  0,  0],
        [ 0,  2,  0, 14,  0],
        [ 0,  0,  3,  0, 15],
@@ -430,12 +430,12 @@ Data science today wouldn't be what it is without [Pandas](https://pandas.pydata
 A really neat feature is that NNZ elements do not have to be forms of 0!
 
 ```python
-In []: import pandas as pd
+In [66]: import pandas as pd
 
-In [66]: ss = pd.SparseSeries.from_coo(dia.tocoo())
+In [67]: ss = pd.SparseSeries.from_coo(dia.tocoo())
 
-In [67]: ss  # uses a MultiIndex
-Out[67]:
+In [68]: ss  # uses a MultiIndex
+Out[68]:
 0  0     1
    2    13
 1  1     2
@@ -453,12 +453,12 @@ BlockIndex
 Block locations: array([0], dtype=int32)
 Block lengths: array([12], dtype=int32)
 
-In []: data = dict(A=[np.nan, 1, 2], B=[np.nan, 3, np.nan])
+In [69]: data = dict(A=[np.nan, 1, 2], B=[np.nan, 3, np.nan])
 
-In [56]: sdf = pd.DataFrame(data).to_sparse()
+In [70]: sdf = pd.DataFrame(data).to_sparse()
 
-In [80]: type(sdf).mro()  # class inheritance hierarchy
-Out[80]:
+In [71]: type(sdf).mro()  # class inheritance hierarchy
+Out[71]:
 [pandas.core.sparse.frame.SparseDataFrame,
  pandas.core.frame.DataFrame,
  pandas.core.generic.NDFrame,
@@ -468,10 +468,10 @@ Out[80]:
  pandas.core.base.SelectionMixin,
  object]
 
-In []: sdtype = pd.SparseDtype(object, fill_value='e')  # not restricted to null values
+In [72]: sdtype = pd.SparseDtype(object, fill_value='e')  # not restricted to null values
 
-In [48]: pd.SparseArray(list('abcdeeeeeeee'), dtype=sdtype)
-Out[48]:
+In [73]: pd.SparseArray(list('abcdeeeeeeee'), dtype=sdtype)
+Out[73]:
 [a, b, c, d, e, e, e, e, e, e, e, e]
 Fill: e
 IntIndex
@@ -481,7 +481,7 @@ Indices: array([0, 1, 2, 3], dtype=int32)
 
 ### Scikit-Learn
 The machine learning powerhouse, [Scikit-Learn](https://scikit-learn.org/stable/), supports sparse matrices in many areas.
-This is important since big data is where sparse matrices thrive (assuming it is sparse enough).
+This is important since big data is where sparse matrices thrive (assuming enough sparsity).
 After all, who wouldn't want to have performance gains from these number-crunching algorithms?
 It hurts having to wait on CPU intensive [SVMs](https://scikit-learn.org/stable/modules/svm.html?highlight=sparse), not to mention the possibility of not having dense arrays fitting into working memory!
 
@@ -490,14 +490,14 @@ This is crucial for NLP since most words are used sparingly if at all.
 Naively using a dense format might otherwise cause speed bottlenecks not to mention the possibility of not fitting in working memory.
 
 ```python
-In [23]: from sklearn.feature_extraction.text import CountVectorizer
+In [74]: from sklearn.feature_extraction.text import CountVectorizer
 
-In []: bow = CountVectorizer().fit_transform(['sparse'])
+In [75]: bow = CountVectorizer().fit_transform(['demo'])
 
-In [24]: sparse.isspmatrix(bow)
-Out[24]: True
+In [76]: sparse.isspmatrix(bow)
+Out[76]: True
 
-In []: sparse.save_npz('bag_of_words.npz', bow)  # store for future use
+In [77]: sparse.save_npz('bag_of_words.npz', bow)  # store for future use
 ```
 
 Other areas where Scikit-Learn has the ability to output sparse matrices include:
@@ -514,18 +514,40 @@ As another implementation, [PyData's sparse library](https://github.com/pydata/s
 The caveat is that as of the writing of this article, only COO and DOK formats are supported.
 
 ```python
-import sparse as sp  # avoid name clobbering
+import sparse as sp  # avoid name clobbering with scipy.sparse
 
-fillvale!!
+In [78]: sarr = sp.random((3, 4, 2), density=0.2)  # 3-D sparse array
+
+In [79]: sarr
+Out[79]: <COO: shape=(3, 4, 2), dtype=float64, nnz=4, fill_value=0.0>
+
+In [80]: sarr += 1  # not possible in scipy.sparse
+
+In [81]: sarr
+Out[81]: <COO: shape=(3, 4, 2), dtype=float64, nnz=4, fill_value=1.0>  # fill_value updates!
+
+In [82]: sarr.todense()
+Out[82]:
+array([[[1.        , 1.        ],
+        [1.        , 1.        ],
+        [1.        , 1.        ],
+        [1.        , 1.        ]],
+
+       [[1.        , 1.        ],
+        [1.86024163, 1.        ],
+        [1.37233162, 1.1114997 ],
+        [1.        , 1.        ]],
+
+       [[1.        , 1.        ],
+        [1.        , 1.16850612],
+        [1.        , 1.        ],
+        [1.        , 1.        ]]])
 ```
 
-
-## Final Thoughts
-Unfortunately [logical operators](https://docs.scipy.org/doc/numpy/reference/ufuncs.html#comparison-functions) are not directly supported for boolean sparse matrices.
-Luckily it is not too difficult to implement `&` and `|`, but `~` is not doable because it would make a sparse matrix into a dense matrix.
+In SciPy, logical operators are not directly implemented, but AND (&) and OR (|) can be emulated by constraining the `dtype` to `bool`:
 
 ```python
-In [44]: class LogicalSparse(sparse.coo_matrix):
+In [83]: class LogicalSparse(sparse.coo_matrix):  # scipy COO
     ...:    def __init__(self, *args, **kwargs):
     ...:        super().__init__(*args, dtype=bool, **kwargs)  # leverage existing base class
     ...:
@@ -536,15 +558,32 @@ In [44]: class LogicalSparse(sparse.coo_matrix):
     ...:        return self + other
 ```
 
-Keep in mind that while sparse matrices are are great tool, they are not necessarily a replacement for arrays.
+Unfortunately NOT (^) is impossible since it would make a sparse matrix into a dense one (theoretically `self - 1`).
+Until now, that is.
+As seen earlier, `sparse` will dynamically update the fill value to accommodate current states.
+
+```python
+In [84]: mask = sp.eye(100, dtype=bool)
+
+In [85]: mask
+Out[85]: <COO: shape=(100, 100), dtype=bool, nnz=100, fill_value=False>
+
+In [86]: ~mask
+Out[86]: <COO: shape=(100, 100), dtype=bool, nnz=100, fill_value=True>
+```
+
+
+## Final Thoughts
+Hopefully this article has enlightened how to use sparse data structures properly so you can go forth and use them with confidence for future projects.
+Knowing the pros and cons of each format (including dense!) will aid in selecting the optimal one for a given task.
+Be mindful that while sparse matrices are are great tool, they are not necessarily a replacement for arrays.
 If a matrix is not sufficiently sparse, the multitude of storage arrays behind the scenes will actually take up more resources than a regular dense array would.
-Furthermore if you are working with more logical operators, you will be forced to look elsewhere.
+Furthermore if you need to regularly mutate an array, perform computations in between, and display output, then sparsity simply isn't worth the trouble.
 But all these concerns aside, hopefully sparse matrices can help "lighten" your load.
 
 
-
 ```python
-In [45]: exit()  # the end :D
+In [87]: exit()  # the end :D
 ```
 
 *Code used to create the above animation is located at [my GitHub](https://github.com/MattEding/NumPy-Articles/tree/master/sparse-matrix).*
