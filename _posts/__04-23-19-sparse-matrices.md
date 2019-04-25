@@ -3,21 +3,20 @@
 
 #### Table of Contents
 1. [Introduction](#introduction)
-- [Construction Matrices](#construction-matrices)
+2. [Construction Matrices](#construction-matrices)
   1. [Coordinate Matrix](#coordinate-matrix)
-  - [Linked List Matrix](#linked-list-matrix)
-  - [Dictionary of Keys Matrix](#dictionary-of-keys-matrix)
-- [Compressed Sparse Matrices](#compressed-sparse-matrices)
-    1. Compressed Sparse Row
-    - Compressed Sparse Column
-    - Block Sparse Row
-- [Diagonal Matrix](#diagonal-matrix)
-- [Specialized Functions](#specialized-functions)
-- Other Libraries
+  2. [Linked List Matrix](#linked-list-matrix)
+  3. [Dictionary of Keys Matrix](#dictionary-of-keys-matrix)
+3. [Compressed Sparse Matrices](#compressed-sparse-matrices)
+    1. [Compressed Sparse Row/Column](#compressed-sparse-row/column)
+    2. [Block Sparse Row](#block-sparse-row)
+4. [Diagonal Matrix](#diagonal-matrix)
+5. [Specialized Functions](#specialized-functions)
+6. [Other Libraries](#other-libraries)
   1. [Pandas](#pandas)
-  - [Scikit-Learn](#scikit-learn)
-  - PyData Sparse
-- [Final Thoughts](#final-thoughts)
+  2. [Scikit-Learn](#scikit-learn)
+  3. [PyData Sparse](#pydata-sparse)
+7. [Final Thoughts](#final-thoughts)
 
 
 ## Introduction
@@ -32,7 +31,6 @@ Using this scheme, sparse matrices can perform faster operations and use less me
 
 Today we will investigate all of the different implementations provided by the [SciPy sparse package](https://docs.scipy.org/doc/scipy/reference/sparse.html).
 This implementation is modeled after `np.matrix` opposed to `np.ndarray`, thus is restricted to 2-D arrays and having quirks like `A * B` doing matrix multiplication instead of element-wise multiplication.
-There are other implementations such as [PyData's sparse library](https://github.com/pydata/sparse) that provide interfaces like `np.ndarray`, but note that it has a limited menu of sparse formats.
 
 ```python
 In [0]: from scipy import sparse
@@ -59,7 +57,7 @@ Typically you would start with one of these forms and then convert to another wh
 
 ### Coordinate Matrix
 Perhaps the simplest sparse format to understand is the <b>COO</b>rdinate ([COO](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.coo_matrix.html)) format.
-This variant uses vectors to store the element values and their coordinate positions.
+This variant uses three subarrays to store the element values and their coordinate positions.
 
 ![COO Matrix](/images/coo.gif)
 
@@ -72,7 +70,7 @@ In [4]: data = [2, 5, 9, 1, 6]
 
 In [5]: coo = sparse.coo_matrix((data, (row, col)), shape=(6, 7))
 
-In [6]: print(coo)  # coordinate format
+In [6]: print(coo)  # coordinate-value format
 # (1, 1)        2
 # (3, 4)        5
 # (0, 2)        9
@@ -137,7 +135,7 @@ In [37]: isinstance(dok, dict)
 Out[37]: True
 ```
 
-Be careful of potential problems using the methods inherited from `dict`; they don't always behave.
+Note: Be careful of potential problems using the methods inherited from `dict`; they don't always behave.
 
 ```python
 In []: out_of_bounds = (999, 999)
@@ -168,7 +166,7 @@ In my opinion, LIL is the coolest sparse format for constructing sparse matrices
 LIL stores information in `lil.rows` where each list represents a row index and the elements inside the list match columns.
 In a parallel array, `lil.data`, the NNZ values are stored.
 But unlike other sparse formats, these subarrays *cannot* be explicitly passed to the constructor; LIL matrices must be made from either an empty state or from existing matrices, dense or sparse.
-Below is an illustration of various techniques to build up a LIL matrix.
+Below is an illustration of various techniques used to build up a LIL matrix.
 
 ```python
 In []: lil = sparse.lil_matrix((6, 5), dtype=int)
@@ -211,9 +209,9 @@ array([[list([8, 1, -1])],
        [list([6])]], dtype=object)
 ```
 
-As an aside, Linked List Matrix is a misnomer since it does *not* actually use [linked lists](https://en.wikipedia.org/wiki/Linked_list) behind the scenes!
-LIL actually uses Python's `list` which is actually a [dynamic array](https://en.wikipedia.org/wiki/Dynamic_array), so it should really be called a List of List Matrix, in spite of what the documentation says.
-(A missed opportunity to dub it LOL... :disappointed:)
+As an aside, Linked List Matrix is a misnomer since it does *not* use [linked lists](https://en.wikipedia.org/wiki/Linked_list) behind the scenes!
+LIL actually uses Python's `list` which is actually a [dynamic array](https://en.wikipedia.org/wiki/Dynamic_array), so it should really be called a List of Lists Matrix, in spite of what the documentation says.
+(A missed opportunity to christen it as LOL... :disappointed:)
 
 ```python
 In [301]: sparse.lil.__doc__  # module docstring
@@ -223,13 +221,13 @@ Out[301]: 'LInked List sparse matrix class\n'
 
 ## Compressed Sparse Matrices
 The formats described earlier are great for building sparse matrices, but they aren't as computationally performant than more specialized forms.
-The reverse is true for compressed sparse matrices, which should be treated as read-only rather than write-only.
-These are more difficult to understand, but with a little patience their structure can be grasped.
+The reverse is true for compressed sparse matrix family, which should be treated as read-only rather than write-only.
+These are more difficult to understand, but with a little patience their structure can be [grokked](https://en.wikipedia.org/wiki/Grok).
 
 
 ### Compressed Spare Row/Column
 
-The <b>C</b>ompressed <b>S</b>parse <b>R</b>ow/<b>C</b>olumn ([CSR](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html) and [CSC](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html)) formats h............
+The <b>C</b>ompressed <b>S</b>parse <b>R</b>ow/<b>C</b>olumn ([CSR](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html) and [CSC](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html)) formats are designed for computation in mind.
 
 ![CSR Matrix](/images/csr.gif)
 
@@ -257,16 +255,19 @@ Adjacent pairs of index pointers determine two things.
 First, their position in the pointer array is the row number.
 Second, these values represent the [start:stop] slice of the indices array, and their difference is the NNZ elements in each row.
 Using the pointers, look up the indices to determine the column for each element in the data.
-CSC works exactly the same but has column based index pointers and row indices instead.
 
-These compressed sparse formats are great as read-only for computation.
-Beware though that CSR, CSC, and BSR are not suited for writing new data points.
-If you are inserting new data points, consider COO, LIL, or DOK instead.
+CSC works exactly the same as CSR but has column based index pointers and row indices instead.
+Here is a diagram of exactly the same data in this format:
+
+![CSC Matrix](/images/csc.gif)
+
+As promised, the compressed formats are indeed faster than their COO counterpart.
+For a modest-sized matrix, we see a 2x speed gain vs COO and 60x speedup vs dense!
 
 ```python
 In [17]: csr.resize(1000, 1000)
 
-In [18]: %timeit csr @ csr  # comparing matrix multiplication
+In [18]: %timeit csr @ csr
 # 111 µs ± 3.66 µs per loop (mean ± std. dev. of 7 runs, 10000 loops each)
 
 In [19]: coo = csr.tocoo()
@@ -276,7 +277,7 @@ In [20]: %timeit coo @ coo
 
 In [21]: arr = csr.toarray()
 
-In [22]: %timeit arr @ arr
+In [22]: %timeit arr @ arr  # order of magnitude slower!
 # 632 ms ± 2.02 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 ```
 
@@ -306,16 +307,16 @@ matrix([[0, 0, 0, 1, 1, 1, 2, 2, 2],
 ```
 
 This implementation requires all the sub-matrices to have the same shape, but there are more generalized constructs with [block matrices](https://en.wikipedia.org/wiki/Block_matrix) that relax this constraint.
-Generalized block matrices do not have their unique data structure in SciPy, but can be indirectly using COO via the `sparse.bmat` constructor function.
+These matrices do not have their unique data structure in SciPy, but can be indirectly made via the `sparse.bmat` constructor function.
 
 ```python
-A = np.arange(8).reshape(2, 4)  # can use arrays
+A = np.arange(8).reshape(2, 4)  # can use dense arrays
 
 T = np.tri(5, 4)
 
 L = [[8] * 4] * 2  # can use lists
 
-I = sparse.identity(4)  # can use sparse array
+I = sparse.identity(4)  # can use sparse arrays
 
 Z = sparse.coo_matrix((2, 3))  # zeros to create column gap
 
@@ -367,9 +368,7 @@ array([[ 1,  0, 13,  0,  0],
 ```
 
 The data is stored in an array of shape (offsets) x  (width) where the offsets dictate the location of each row in the data array along diagonal.
-Offsets are below or above the main diagonal when negative or positive respectively.
-
-Note that if a row in the data matrix is cutoff, the excess elements can take any value (but they must have placeholders).
+Offsets are below or above the main diagonal when negative or positive respectively. Note that if a row in the data matrix is cutoff, the excess elements can take any value (but they must have placeholders).
 
 ```python
 In [29]: dia.data.ravel()[9:12] = 0  # replace cutoff data
@@ -391,18 +390,19 @@ array([[ 1,  0, 13,  0,  0],
        [ 0,  0,  0,  9,  0]])
 ```
 
-#### Other Formats
-There are other structures used to represent sparse matrices effectively, each having their unique advantages and disadvantages (see the documentation for details).
 
-
-
-#### Specialized Functions
+## Specialized Functions
 In addition to the multitude of formats, there is a plethora of functions specialized just for sparse matrices.
-Use these functions whenever possible rather than their NumPy counterparts, otherwise speed performances will be compromised.
+Use these functions whenever possible rather than their NumPy counterparts, otherwise speed performances will be compromised. Even worse, the resulting calculations could be [incorrect](https://docs.scipy.org/doc/scipy/reference/sparse.html#usage-information)!
 
+- [common methods](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.spmatrix.html)
+  - scipy.sparse.spmatrix.mean
+  - scipy.sparse.spmatrix.getcol
+  - scipy.sparse.spmatrix.getmaxprint
+  - ...
 - [general functions](https://docs.scipy.org/doc/scipy/reference/sparse.html#functions)
-  - scipy.sparse.save_npz
-  - scipy.sparse.isspmatrix
+  - scipy.sparse.load_npz
+  - scipy.sparse.isspmatrix_coo
   - scipy.sparse.hstack
   - ...
 - [linear algebra](https://docs.scipy.org/doc/scipy/reference/sparse.linalg.html)
@@ -416,11 +416,68 @@ Use these functions whenever possible rather than their NumPy counterparts, othe
   - scipy.sparse.csgraph.connected_components
   - ...
 
+Looking into the details of these are left as an exercise to the avid reader.
+
 
 ## Other Libraries
+SciPy is not the only resource for working with sparse structures in the Python ecosystem.
+While most appear to use the SciPy package internally, they have all made it their own.
+I will only be presenting several libraries that I find the most compelling, but this is not supposed to be the end all be all.
+
 
 ### Pandas
-...
+Data science today wouldn't be what it is without [Pandas](https://pandas.pydata.org/), so it doesn't come as a surprise that it supports [sparse variants](https://pandas.pydata.org/pandas-docs/stable/user_guide/sparse.html) of its data structures.
+A really neat feature is that NNZ elements do not have to be forms of 0!
+
+```python
+In []: import pandas as pd
+
+In [66]: ss = pd.SparseSeries.from_coo(dia.tocoo())
+
+In [67]: ss  # uses a MultiIndex
+Out[67]:
+0  0     1
+   2    13
+1  1     2
+   3    14
+2  2     3
+   4    15
+3  0     6
+   3     4
+4  1     7
+   4     5
+5  2     8
+6  3     9
+dtype: Sparse[int64, 0]
+BlockIndex
+Block locations: array([0], dtype=int32)
+Block lengths: array([12], dtype=int32)
+
+In []: data = dict(A=[np.nan, 1, 2], B=[np.nan, 3, np.nan])
+
+In [56]: sdf = pd.DataFrame(data).to_sparse()
+
+In [80]: type(sdf).mro()  # class inheritance hierarchy
+Out[80]:
+[pandas.core.sparse.frame.SparseDataFrame,
+ pandas.core.frame.DataFrame,
+ pandas.core.generic.NDFrame,
+ pandas.core.base.PandasObject,
+ pandas.core.base.StringMixin,
+ pandas.core.accessor.DirNamesMixin,
+ pandas.core.base.SelectionMixin,
+ object]
+
+In []: sdtype = pd.SparseDtype(object, fill_value='e')  # not restricted to null values
+
+In [48]: pd.SparseArray(list('abcdeeeeeeee'), dtype=sdtype)
+Out[48]:
+[a, b, c, d, e, e, e, e, e, e, e, e]
+Fill: e
+IntIndex
+Indices: array([0, 1, 2, 3], dtype=int32)
+```
+
 
 ### Scikit-Learn
 The machine learning powerhouse, [Scikit-Learn](https://scikit-learn.org/stable/), supports sparse matrices in many areas.
@@ -428,8 +485,7 @@ This is important since big data is where sparse matrices thrive (assuming it is
 After all, who wouldn't want to have performance gains from these number-crunching algorithms?
 It hurts having to wait on CPU intensive [SVMs](https://scikit-learn.org/stable/modules/svm.html?highlight=sparse), not to mention the possibility of not having dense arrays fitting into working memory!
 
-#:TODO Change  
-CSR is the object type of Scikit-Learn's term-document matrices produced by its [text vectorizers](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.feature_extraction.text).
+Scikit-Learn's term-document matrices produced by [text vectorizers](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.feature_extraction.text) result in CSR matrices.
 This is crucial for NLP since most words are used sparingly if at all.
 Naively using a dense format might otherwise cause speed bottlenecks not to mention the possibility of not fitting in working memory.
 
@@ -454,7 +510,14 @@ In short embrace their usage whenever possible to make your machine learning mod
 
 
 ### PyData Sparse
-...
+As another implementation, [PyData's sparse library](https://github.com/pydata/sparse) provides an interface like `np.ndarray` instead of `np.matrix`, permitting creation of multidimensional sparse arrays.
+The caveat is that as of the writing of this article, only COO and DOK formats are supported.
+
+```python
+import sparse as sp  # avoid name clobbering
+
+fillvale!!
+```
 
 
 ## Final Thoughts
