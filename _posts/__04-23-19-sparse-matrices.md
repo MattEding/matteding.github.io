@@ -582,6 +582,7 @@ Furthermore if you need to regularly mutate an array, perform computations in be
 But all these concerns aside, hopefully sparse matrices can help "lighten" your load.
 
 Comparison of Matrix Formats
+
 |               | COO | DOK | LIL | CSR | CSC | BSR | DIA | Dense |
 | ------------- | --- | --- | --- | --- | --- | --- | --- | ----- |
 | indexing      | no  | yes | yes | yes | yes | no† | no  | yes   |
