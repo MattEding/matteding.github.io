@@ -585,13 +585,9 @@ Comparison of Matrix Formats
 |               | COO | DOK | LIL | CSR | CSC | BSR | DIA | Dense |
 | ------------- | --- | --- | --- | --- | --- | --- | --- | ----- |
 | indexing      | no  | yes | yes | yes | yes | no† | no  | yes   |
-| ------------- | --- | --- | --- | --- | --- | --- | --- | ----- |
 | "write-only"  | yes | yes | yes | no  | no  | no  | no  | yes   |
-| ------------- | --- | --- | --- | --- | --- | --- | --- | ----- |
 | "read-only"   | no  | no  | no  | yes | yes | yes | yes | yes   |
-| ------------- | --- | --- | --- | --- | --- | --- | --- | ----- |
 | low memory‡   | yes | no  | no  | yes | yes | yes | yes | no    |
-| ------------- | --- | --- | --- | --- | --- | --- | --- | ----- |
 | PyData sparse | yes | yes | no  | no  | no  | no  | no  | n/a   |
 
 † BSR raises `NotImplementedError:` rather than explicitly raising `TypeError: 'xxx_matrix' object is not subscriptable`. So maybe in the future it will support indexing.
