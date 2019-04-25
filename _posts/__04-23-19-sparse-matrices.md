@@ -4,18 +4,18 @@
 #### Table of Contents
 1. [Introduction](#introduction)
 2. [Construction Matrices](#construction-matrices)
-  1. [Coordinate Matrix](#coordinate-matrix)
-  2. [Linked List Matrix](#linked-list-matrix)
-  3. [Dictionary of Keys Matrix](#dictionary-of-keys-matrix)
+    1. [Coordinate Matrix](#coordinate-matrix)
+    2. [Linked List Matrix](#linked-list-matrix)
+    3. [Dictionary of Keys Matrix](#dictionary-of-keys-matrix)
 3. [Compressed Sparse Matrices](#compressed-sparse-matrices)
     1. [Compressed Sparse Row/Column](#compressed-sparse-rowcolumn)
     2. [Block Sparse Row](#block-sparse-row)
 4. [Diagonal Matrix](#diagonal-matrix)
 5. [Specialized Functions](#specialized-functions)
 6. [Other Libraries](#other-libraries)
-  1. [Pandas](#pandas)
-  2. [Scikit-Learn](#scikit-learn)
-  3. [PyData Sparse](#pydata-sparse)
+    1. [Pandas](#pandas)
+    2. [Scikit-Learn](#scikit-learn)
+    3. [PyData Sparse](#pydata-sparse)
 7. [Final Thoughts](#final-thoughts)
 
 
@@ -225,7 +225,7 @@ The reverse is true for compressed sparse matrix family, which should be treated
 These are more difficult to understand, but with a little patience their structure can be [grokked](https://en.wikipedia.org/wiki/Grok).
 
 
-### Compressed Spare Row/Column
+### Compressed Sparse Row/Column
 
 The <b>C</b>ompressed <b>S</b>parse <b>R</b>ow/<b>C</b>olumn ([CSR](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html) and [CSC](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csc_matrix.html)) formats are designed for computation in mind.
 
@@ -544,7 +544,7 @@ array([[[1.        , 1.        ],
         [1.        , 1.        ]]])
 ```
 
-In SciPy, logical operators are not directly implemented, but AND (&) and OR (|) can be emulated by constraining the `dtype` to `bool`:
+In SciPy, logical operators are not directly implemented, but AND (`&`) and OR (`|`) can be emulated by constraining the `dtype` to `bool`:
 
 ```python
 In [83]: class LogicalSparse(sparse.coo_matrix):  # scipy COO
@@ -558,7 +558,7 @@ In [83]: class LogicalSparse(sparse.coo_matrix):  # scipy COO
     ...:        return self + other
 ```
 
-Unfortunately NOT (^) is impossible since it would make a sparse matrix into a dense one (theoretically `self - 1`).
+Unfortunately NOT (`^`) is impossible since it would make a sparse matrix into a dense one (theoretically `self - 1`).
 Until now, that is.
 As seen earlier, `sparse` will dynamically update the fill value to accommodate current states.
 
@@ -581,9 +581,26 @@ If a matrix is not sufficiently sparse, the multitude of storage arrays behind t
 Furthermore if you need to regularly mutate an array, perform computations in between, and display output, then sparsity simply isn't worth the trouble.
 But all these concerns aside, hopefully sparse matrices can help "lighten" your load.
 
+Comparison of Matrix Formats
+|               | COO | DOK | LIL | CSR | CSC | BSR | DIA | Dense |
+| ------------- | --- | --- | --- | --- | --- | --- | --- | ----- |
+| indexing      | no  | yes | yes | yes | yes | no† | no  | yes   |
+| ------------- | --- | --- | --- | --- | --- | --- | --- | ----- |
+| "write-only"  | yes | yes | yes | no  | no  | no  | no  | yes   |
+| ------------- | --- | --- | --- | --- | --- | --- | --- | ----- |
+| "read-only"   | no  | no  | no  | yes | yes | yes | yes | yes   |
+| ------------- | --- | --- | --- | --- | --- | --- | --- | ----- |
+| low memory‡   | yes | no  | no  | yes | yes | yes | yes | no    |
+| ------------- | --- | --- | --- | --- | --- | --- | --- | ----- |
+| PyData sparse | yes | yes | no  | no  | no  | no  | no  | n/a   |
+
+† BSR raises `NotImplementedError:` rather than explicitly raising `TypeError: 'xxx_matrix' object is not subscriptable`. So maybe in the future it will support indexing.
+
+‡ Assuming enough NNZ.
+
 
 ```python
 In [87]: exit()  # the end :D
 ```
 
-*Code used to create the above animation is located at [my GitHub](https://github.com/MattEding/NumPy-Articles/tree/master/sparse-matrix).*
+*Code used to create the above animations is located at [my GitHub](https://github.com/MattEding/NumPy-Articles/tree/master/sparse-matrix).*
