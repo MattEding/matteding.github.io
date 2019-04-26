@@ -89,7 +89,6 @@ matrix([[0, 0, 9, 0, 0, 0, 0],
 
 The savings on memory consumption is quite substantial as the matrix size increases.
 Managing data in a sparse structure is a fixed cost unlike the case for dense matrices.
-
 The overhead incurred from needing to manage the subarrays is becomes negligible as data grows making it a great choice for some datasets.
 
 A word of caution: only use sparse arrays if they are sufficiently sparse enough; it would be counterproductive storing a mostly nonzero array using several subarrays to keep track of position and data.
@@ -412,7 +411,7 @@ array([[ 1,  0, 13,  0,  0],
 In addition to the multitude of formats, there is a plethora of functions specialized just for sparse matrices.
 Use these functions whenever possible rather than their NumPy counterparts, otherwise speed performances will be compromised. Even worse, the resulting calculations could be [incorrect](https://docs.scipy.org/doc/scipy/reference/sparse.html#usage-information)!
 
-- [common methods](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.spmatrix.html)
+- [inherited methods](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.spmatrix.html)
   - scipy.sparse.spmatrix.mean
   - scipy.sparse.spmatrix.getcol
   - scipy.sparse.spmatrix.getmaxprint
@@ -444,7 +443,7 @@ I will present several libraries that I find most compelling, but this is not su
 
 ### Pandas
 Data science today wouldn't be what it is without [Pandas](https://pandas.pydata.org/), so it doesn't come as a surprise that it supports [sparse variants](https://pandas.pydata.org/pandas-docs/stable/user_guide/sparse.html) of its data structures.
-A really neat feature is that NNZ elements do not have to be forms of 0!
+A really neat feature is that inferred elements do not have to be forms of 0!
 
 ```python
 In [70]: import pandas as pd
