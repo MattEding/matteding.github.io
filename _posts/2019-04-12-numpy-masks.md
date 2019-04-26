@@ -96,4 +96,4 @@ So go out there and combat for better code!
 In [21]: exit()  # the end :D
 ```
 
-*Code used to create the above animation is located at [my GitHub](https://github.com/MattEding/NumPy-Articles/tree/master/masks).*
+*Code used to create the above animation is located at [my GitHub](https://github.com/MattEding/Python-Article-Resources/tree/master/masks).*

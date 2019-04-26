@@ -148,4 +148,4 @@ It allows you to concisely write code *(i.e. less error prone)* while making you
 In [33]: exit()  # the end :D
 ```
 
-*Code used to create the above animations are located at [my GitHub](https://github.com/MattEding/NumPy-Articles/tree/master/broadcasting).*
+*Code used to create the above animations are located at [my GitHub](https://github.com/MattEding/Python-Article-Resources/tree/master/broadcasting).*

@@ -119,4 +119,4 @@ But maybe that, mutation, and more will be a future topic for another day.
 In [18]: exit()  # the end :D
 ```
 
-*Code used to create the above animation is located at [my GitHub](https://github.com/MattEding/NumPy-Articles/tree/master/differential-evolution).*
+*Code used to create the above animation is located at [my GitHub](https://github.com/MattEding/Python-Article-Resources/tree/master/differential-evolution).*
