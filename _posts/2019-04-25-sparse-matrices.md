@@ -88,7 +88,10 @@ matrix([[0, 0, 9, 0, 0, 0, 0],
 ```
 
 The savings on memory consumption is quite substantial as the matrix size increases.
-The overhead incurred from needing to manage the subarrays is a fixed cost for sparse matrices unlike the case for dense matrices.
+Managing data in a sparse structure is a fixed cost unlike the case for dense matrices.
+
+The overhead incurred from needing to manage the subarrays is becomes negligible as data grows making it a great choice for some datasets.
+
 A word of caution: only use sparse arrays if they are sufficiently sparse enough; it would be counterproductive storing a mostly nonzero array using several subarrays to keep track of position and data.
 
 ```python
@@ -135,7 +138,7 @@ In [19]: isinstance(dok, dict)
 Out[19]: True
 ```
 
-Note: Be careful of potential problems using the methods inherited from `dict`; they don't always behave.
+Note: be careful of potential problems using the methods inherited from `dict`; they don't always behave.
 
 ```python
 In [20]: out_of_bounds = (999, 999)
@@ -210,7 +213,7 @@ array([[list([8, 1, -1])],
 ```
 
 As an aside, Linked List Matrix is a misnomer since it does *not* use [linked lists](https://en.wikipedia.org/wiki/Linked_list) behind the scenes!
-LIL actually uses Python's `list` which is actually a [dynamic array](https://en.wikipedia.org/wiki/Dynamic_array), so it should really be called a List of Lists Matrix, in spite of what the documentation says.
+LIL actually uses Python's `list` which is a [dynamic array](https://en.wikipedia.org/wiki/Dynamic_array), so it should really be called a List of Lists Matrix, in spite of what the documentation says.
 (A missed opportunity to christen it as LOL...)
 
 ```python
@@ -335,8 +338,8 @@ In [59]: I = sparse.identity(4)  # can use sparse arrays
 In [60]: Z = sparse.coo_matrix((2, 3))  # zeros to create column gap
 
 In [61]: sp.bmat([[   A,    Z,    L],
-     ...:          [None, None,    I],
-     ...:          [   T, None, None]], dtype=int)
+    ...:          [None, None,    I],
+    ...:          [   T, None, None]], dtype=int)
 Out[61]:
 <11x11 sparse matrix of type '<class 'numpy.int64'>'
         with 33 stored elements in COOrdinate format>
@@ -382,7 +385,7 @@ array([[ 1,  0, 13,  0,  0],
 ```
 
 The data is stored in an array of shape (offsets) x  (width) where the offsets dictate the location of each row in the data array along diagonal.
-Offsets are below or above the main diagonal when negative or positive respectively. Note that if a row in the data matrix is cutoff, the excess elements can take any value (but they must have placeholders).
+Offsets are below or above the main diagonal when negative or positive respectively. Note that if a row in the data matrix is cutoff, the excess elements can assume any value (but they must have placeholders).
 
 ```python
 In [67]: dia.data.ravel()[9:12] = 0  # replace cutoff data
@@ -436,7 +439,7 @@ Looking into the details of these are left as an exercise to the avid reader.
 ## Other Libraries
 SciPy is not the only resource for working with sparse structures in the Python ecosystem.
 While most appear to use the SciPy package internally, they have all made it their own.
-I will only be presenting several libraries that I find the most compelling, but this is not supposed to be the end all be all.
+I will present several libraries that I find most compelling, but this is not supposed to be the end all be all.
 
 
 ### Pandas
@@ -495,13 +498,13 @@ Indices: array([0, 1, 2, 3], dtype=int32)
 
 ### Scikit-Learn
 The machine learning powerhouse, [Scikit-Learn](https://scikit-learn.org/stable/), supports sparse matrices in many areas.
-This is important since big data is where sparse matrices thrive (assuming enough sparsity).
+This is important since big data thrives on sparse matrices (assuming enough sparsity).
 After all, who wouldn't want to have performance gains from these number-crunching algorithms?
-It hurts having to wait on CPU intensive [SVMs](https://scikit-learn.org/stable/modules/svm.html?highlight=sparse), not to mention the possibility of dense arrays not fitting into working memory!
+It hurts having to wait on CPU intensive [SVMs](https://scikit-learn.org/stable/modules/svm.html?highlight=sparse), not to mention discovering some data won't fit into working memory!
 
 Scikit-Learn's term-document matrices produced by [text vectorizers](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.feature_extraction.text) result in CSR matrices.
 This is crucial for NLP since most words are used sparingly if at all.
-Naively using a dense format might otherwise cause speed bottlenecks not to mention the possibility of not fitting in working memory.
+Naively using a dense format might otherwise cause speed bottlenecks and lots of wasted memory.
 
 ```python
 In [78]: from sklearn.feature_extraction.text import CountVectorizer
@@ -519,7 +522,7 @@ Other areas where Scikit-Learn has the ability to output sparse matrices include
 - sklearn.preprocessing.LabelBinarizer
 - sklearn.feature_extraction.DictVectorizer
 
-Moreover there are utilities that play well with sparse matrices such as [scalers](https://scikit-learn.org/stable/modules/preprocessing.html#scaling-sparse-data), a handful of [decompositions](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.decomposition), some [pairwise distances](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise_distances.html#sklearn.metrics.pairwise_distances), [train-test-split](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html#sklearn.model_selection.train_test_split), and *many* estimators can predict and/or fit sparse matrices.
+Moreover there are utilities that play well with sparse matrices such as [scalers](https://scikit-learn.org/stable/modules/preprocessing.html#scaling-sparse-data), a handful of [decompositions](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.decomposition), some [pairwise distances](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise_distances.html), [train-test-split](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html), and *many* estimators can predict and/or fit sparse matrices.
 In short embrace their usage whenever possible to make your machine learning models more efficient.
 
 
@@ -589,13 +592,13 @@ Out[91]: <COO: shape=(100, 100), dtype=bool, nnz=100, fill_value=True>
 
 ## Final Thoughts
 Hopefully this article has enlightened how to use sparse data structures properly so you can go forth and use them with confidence for future projects.
-Knowing the pros and cons of each format (including dense!) will aid in selecting the optimal one for a given task.
+Knowing the pros and cons of each format (including dense) will aid in selecting the optimal one for a given task.
 Be mindful that while sparse matrices are are great tool, they are not necessarily a replacement for arrays.
 If a matrix is not sufficiently sparse, the multitude of storage arrays behind the scenes will actually take up more resources than a regular dense array would.
 Furthermore if you need to regularly mutate an array, perform computations in between, and display output, then sparsity simply isn't worth the trouble.
 But all these concerns aside, hopefully sparse matrices can help "lighten" your load.
 
-Comparison of Matrix Formats
+__Comparison of Matrix Formats__
 
 |               | COO | DOK | LIL | CSR | CSC | BSR | DIA | Dense |
 | ------------- | --- | --- | --- | --- | --- | --- | --- | ----- |
