@@ -30,3 +30,7 @@ books I have read include the following in no particular order:
 - Effective Computation in Physics
 - Automate the Boring Stuff with Python
 - Learning SQL
+
+__Contact me__
+
+Reach out to me on [LinkedIn](https://www.linkedin.com/in/matteding/).
